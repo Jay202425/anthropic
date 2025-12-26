@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Risk & Gain Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin-top: 10px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-prefix {
+            position: relative;
+        }
+
+        .input-prefix::before {
+            content: '$';
+            position: absolute;
+            left: 15px;
+            top: 40px;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+            pointer-events: none;
+        }
+
+        .input-prefix input {
+            padding-left: 35px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-analyze {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-analyze:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-analyze:active {
+            transform: translateY(0);
+        }
+
+        .btn-clear {
+            background: #f0f0f0;
+            color: #555;
+        }
+
+        .btn-clear:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-analyze:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            position: relative;
+        }
+
+        .results-section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 10px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f0f0f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .results-content {
+            display: none;
+        }
+
+        .results-content.active {
+            display: block;
+        }
+
+        .analysis-box {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+
+        .analysis-box h3 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .analysis-box p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-card .value {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .metric-card .label {
+            font-size: 0.9em;
+            opacity: 0.95;
+        }
+
+        .error {
+            background: #fee;
+            border-left: 4px solid #f33;
+            padding: 20px;
+            border-radius: 8px;
+            color: #c33;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .error-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .api-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .api-status.ready {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .api-status.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .api-status {
+                position: static;
+                margin-bottom: 20px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .recommendations {
+            background: #f0f7ff;
+            border: 2px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .recommendations h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .recommendations ol {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .recommendations li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Financial Analyzer</h1>
+            <p>AI-Powered Risk Assessment & Gain Analysis</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Form Section -->
+            <div class="form-section">
+                <h2>Enter Your Financial Data</h2>
+                
+                <form id="financialForm">
+                    <div class="form-group input-prefix">
+                        <label for="annual_income">Annual Income</label>
+                        <input 
+                            type="number" 
+                            id="annual_income" 
+                            name="annual_income" 
+                            placeholder="e.g., 75000"
+                            min="0"
+                            step="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group input-prefix">
+                        <label for="total_savings">Total Savings</label>
+                        <input 
+                            type="number" 
+                            id="total_savings" 
+                            name="total_savings" 
+                            placeholder="e.g., 25000"
+                            min="0"
+                            step="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group input-prefix">
+                        <label for="total_loans">Total Loans / Debt</label>
+                        <input 
+                            type="number" 
+                            id="total_loans" 
+                            name="total_loans" 
+                            placeholder="e.g., 40000"
+                            min="0"
+                            step="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group input-prefix">
+                        <label for="monthly_expenses">Monthly Expenses</label>
+                        <input 
+                            type="number" 
+                            id="monthly_expenses" 
+                            name="monthly_expenses" 
+                            placeholder="e.g., 3200"
+                            min="0"
+                            step="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group input-prefix">
+                        <label for="investment_amount">Investment Amount</label>
+                        <input 
+                            type="number" 
+                            id="investment_amount" 
+                            name="investment_amount" 
+                            placeholder="e.g., 8000"
+                            min="0"
+                            step="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn-analyze" id="analyzeBtn">
+                            📊 Analyze
+                        </button>
+                        <button type="reset" class="btn-clear">
+                            🔄 Clear
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <div class="api-status" id="apiStatus">Checking...</div>
+                <h2>Analysis Results</h2>
+
+                <div class="error" id="errorBox">
+                    <div class="error-title">Error</div>
+                    <div id="errorMessage"></div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Analyzing your financial situation...</div>
+                </div>
+
+                <div class="results-content" id="resultsContent">
+                    <!-- Metrics -->
+                    <div class="metrics-grid" id="metricsGrid"></div>
+
+                    <!-- Analysis -->
+                    <div class="analysis-box" id="initialAnalysis" style="display: none;">
+                        <h3>📊 Initial Analysis</h3>
+                        <p id="initialAnalysisText"></p>
+                    </div>
+
+                    <div class="analysis-box" id="detailedMetrics" style="display: none;">
+                        <h3>📈 Detailed Metrics</h3>
+                        <p id="detailedMetricsText"></p>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="recommendations" id="recommendationsBox" style="display: none;">
+                        <h3>💡 Recommendations</h3>
+                        <div id="recommendationsText"></div>
+                    </div>
+                </div>
+
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">📋</div>
+                    <p>Fill in your financial information and click "Analyze" to get started</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('financialForm');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loading = document.getElementById('loading');
+        const resultsContent = document.getElementById('resultsContent');
+        const emptyState = document.getElementById('emptyState');
+        const errorBox = document.getElementById('errorBox');
+        const errorMessage = document.getElementById('errorMessage');
+        const apiStatus = document.getElementById('apiStatus');
+
+        // Check API health on page load
+        checkApiHealth();
+
+        async function checkApiHealth() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                if (data.api_key_configured) {
+                    apiStatus.textContent = '✓ API Ready';
+                    apiStatus.className = 'api-status ready';
+                } else {
+                    apiStatus.textContent = '⚠ API Key Missing';
+                    apiStatus.className = 'api-status warning';
+                    showError('API key not configured', 'Please set ANTHROPIC_API_KEY in .env file');
+                }
+            } catch (error) {
+                apiStatus.textContent = '⚠ Connection Error';
+                apiStatus.className = 'api-status warning';
+            }
+        }
+
+        function showError(title, message) {
+            errorMessage.textContent = message;
+            errorBox.classList.add('active');
+        }
+
+        function hideError() {
+            errorBox.classList.remove('active');
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError();
+
+            // Get form data
+            const formData = new FormData(form);
+            const data = {
+                annual_income: formData.get('annual_income'),
+                total_savings: formData.get('total_savings'),
+                total_loans: formData.get('total_loans'),
+                monthly_expenses: formData.get('monthly_expenses'),
+                investment_amount: formData.get('investment_amount')
+            };
+
+            // Show loading state
+            emptyState.style.display = 'none';
+            resultsContent.classList.remove('active');
+            loading.classList.add('active');
+            analyzeBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || result.error || 'Analysis failed');
+                }
+
+                // Display results
+                displayResults(result);
+                resultsContent.classList.add('active');
+
+            } catch (error) {
+                showError('Analysis Error', error.message);
+                console.error('Error:', error);
+            } finally {
+                loading.classList.remove('active');
+                analyzeBtn.disabled = false;
+            }
+        });
+
+        function displayResults(result) {
+            const { analysis, metrics, input_data } = result;
+
+            // Display metrics
+            const metricsGrid = document.getElementById('metricsGrid');
+            metricsGrid.innerHTML = `
+                <div class="metric-card">
+                    <div class="value">\$${metrics.monthly_income.toLocaleString('en-US', {maximumFractionDigits: 0})}</div>
+                    <div class="label">Monthly Income</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">\$${metrics.monthly_surplus.toLocaleString('en-US', {maximumFractionDigits: 0})}</div>
+                    <div class="label">Monthly Surplus</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">${metrics.debt_to_savings_ratio}</div>
+                    <div class="label">Debt-to-Savings Ratio</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">${metrics.savings_rate}%</div>
+                    <div class="label">Savings Rate</div>
+                </div>
+            `;
+
+            // Display analysis
+            const initialAnalysis = document.getElementById('initialAnalysis');
+            document.getElementById('initialAnalysisText').textContent = analysis.initial_analysis;
+            initialAnalysis.style.display = 'block';
+
+            const detailedMetrics = document.getElementById('detailedMetrics');
+            document.getElementById('detailedMetricsText').textContent = analysis.detailed_metrics;
+            detailedMetrics.style.display = 'block';
+
+            // Display recommendations
+            const recommendationsBox = document.getElementById('recommendationsBox');
+            const recommendationsText = document.getElementById('recommendationsText');
+            recommendationsText.innerHTML = `<ol>${analysis.recommendations
+                .split('\n')
+                .filter(line => line.trim())
+                .map(line => `<li>${line}</li>`)
+                .join('')}</ol>`;
+            recommendationsBox.style.display = 'block';
+        }
+
+        // Set example values for demo
+        function setExampleData() {
+            document.getElementById('annual_income').value = '85000';
+            document.getElementById('total_savings').value = '25000';
+            document.getElementById('total_loans').value = '40000';
+            document.getElementById('monthly_expenses').value = '3200';
+            document.getElementById('investment_amount').value = '8000';
+        }
+    </script>
+</body>
+</html>

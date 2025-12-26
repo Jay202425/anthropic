@@ -1,0 +1,84 @@
+# 🚀 Quick Start - Web Interface
+
+## Start the Server in 1 Command
+
+```powershell
+cd c:\Users\Administrator\Anthropic; C:/Users/Administrator/Anthropic/.venv/Scripts/python.exe app.py
+```
+
+## Access the Web Interface
+
+Open your browser to: **http://localhost:5000**
+
+## Before You Start ⚠️
+
+**You MUST set your API key first:**
+
+1. Copy `.env.example` to `.env`
+2. Add your Anthropic API key:
+   ```
+   ANTHROPIC_API_KEY=sk-ant-xxxxx
+   ```
+
+## What You Get 🎁
+
+✅ Beautiful web form for financial input
+✅ Real-time AI analysis
+✅ Risk assessment & metrics
+✅ Personalized recommendations
+✅ Mobile-friendly interface
+✅ No installation needed (except API key)
+
+## Files Included
+
+| File | Purpose |
+|------|---------|
+| `app.py` | Flask web server |
+| `templates/index.html` | Web interface |
+| `financial_analyzer.py` | AI analysis engine |
+| `.env` | Your API key (create this!) |
+
+## API Endpoints
+
+- `GET http://localhost:5000/` - Web interface
+- `POST http://localhost:5000/api/analyze` - Full analysis
+- `GET http://localhost:5000/api/health` - Status check
+
+## Input Fields
+
+1. **Annual Income** - Your yearly earnings ($)
+2. **Total Savings** - Cash & liquid assets ($)
+3. **Total Loans** - All debt (mortgages, car loans, credit cards) ($)
+4. **Monthly Expenses** - Average monthly spending ($)
+5. **Investment Amount** - Current portfolio value ($)
+
+## Output
+
+The AI provides:
+- 📊 Initial financial analysis
+- 📈 Risk score (0-100) and metrics
+- 💡 5 personalized recommendations
+
+## Stop the Server
+
+Press `Ctrl+C` in the terminal where the server is running
+
+## Troubleshooting
+
+### "API key not configured"
+→ Create `.env` file with your API key
+
+### "Port 5000 already in use"
+→ Change `port=5000` to another port in `app.py`
+
+### "Page won't load"
+→ Check server terminal for errors
+→ Make sure server is running
+
+## Need Help?
+
+Check `WEB_INTERFACE_GUIDE.md` for detailed documentation.
+
+---
+
+**That's it! Enjoy! 🎉**
