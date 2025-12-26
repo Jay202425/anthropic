@@ -55,10 +55,14 @@ st.markdown("""
 # Initialize session state
 if 'analyzer' not in st.session_state:
     st.session_state.analyzer = None
-    try:
-        st.session_state.analyzer = FinancialAnalyzer()
-    except Exception as e:
-        st.error(f"Error initializing analyzer: {str(e)}")
+    api_key = os.getenv('ANTHROPIC_API_KEY') or st.secrets.get('ANTHROPIC_API_KEY')
+    if api_key:
+        try:
+            st.session_state.analyzer = FinancialAnalyzer()
+        except Exception as e:
+            st.error(f"Error initializing analyzer: {str(e)}")
+    else:
+        st.warning("API key not configured")
 
 if 'results' not in st.session_state:
     st.session_state.results = None

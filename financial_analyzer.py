@@ -16,7 +16,10 @@ class FinancialAnalyzer:
     
     def __init__(self):
         """Initialize the Anthropic client."""
-        self.client = Anthropic()
+        api_key = os.getenv('ANTHROPIC_API_KEY')
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY environment variable not set")
+        self.client = Anthropic(api_key=api_key)
         self.model = "claude-3-5-sonnet-20241022"
         self.conversation_history = []
         
