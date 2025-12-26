@@ -87,6 +87,7 @@ with col1:
         annual_income = st.number_input(
             "Annual Income ($)",
             min_value=0.0,
+            max_value=10000000.0,
             step=1000.0,
             value=85000.0,
             help="Your total yearly earnings"
@@ -95,6 +96,7 @@ with col1:
         total_savings = st.number_input(
             "Total Savings ($)",
             min_value=0.0,
+            max_value=100000000.0,
             step=1000.0,
             value=25000.0,
             help="Cash and liquid assets"
@@ -103,6 +105,7 @@ with col1:
         total_loans = st.number_input(
             "Total Loans / Debt ($)",
             min_value=0.0,
+            max_value=100000000.0,
             step=1000.0,
             value=40000.0,
             help="All outstanding debt (car, student, mortgage, credit cards)"
@@ -111,6 +114,7 @@ with col1:
         monthly_expenses = st.number_input(
             "Monthly Expenses ($)",
             min_value=0.0,
+            max_value=1000000.0,
             step=100.0,
             value=3200.0,
             help="Average monthly spending"
@@ -119,6 +123,7 @@ with col1:
         investment_amount = st.number_input(
             "Investment Amount ($)",
             min_value=0.0,
+            max_value=100000000.0,
             step=1000.0,
             value=8000.0,
             help="Current investment portfolio value"
